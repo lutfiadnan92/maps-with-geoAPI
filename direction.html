@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MAPS with GEOAPI</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://geoapi.heartrails.com/api/geoapi.js"></script>
+	<script src = "https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+	<script type="text/javascript">
+    function initMap() {
+      let directionsService = new google.maps.DirectionsService;
+      let directionsDisplay = new google.maps.DirectionsRenderer;
+      let map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 7,
+        center: {lat: 35.708645, lng: 139.731144}
+      });
+      directionsDisplay.setMap(map);
+
+      let onChangeHandler = function() {
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+      };
+      document.getElementById('geoapi-cities').addEventListener('change', onChangeHandler);
+      document.getElementById('geoapi-towns').addEventListener('change', onChangeHandler);
+    }
+
+    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+      directionsService.route({
+        origin: document.getElementById('geoapi-cities').value,
+        destination: document.getElementById('geoapi-towns').value,
+        travelMode: 'DRIVING'
+      }, function(response, status) {
+        if (status === 'OK') {
+          directionsDisplay.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });
+    }
+    google.maps.event.addDomListener(window, 'load', initMap);
+	</script>
+	<style>
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 15%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+</head>
+<body>	
+	<div id="floating-panel">
+    <b>Start: </b>
+    <select id="geoapi-prefectures">
+      <option value=""></option>
+    </select>
+    <select id="geoapi-cities">
+      <option value=""></option>
+    </select>
+    <b>End: </b>
+    <select id="geoapi-towns">
+      <option value=""></option>
+    </select>
+  </div>
+    <div id="map"></div>
+</body>
+</html>
